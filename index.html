@@ -433,57 +433,33 @@ button:active { transform: scale(.975); }
 }
 #closeDiscovery.is-visible { display: flex; align-items: center; justify-content: center; }
 
-/* พื้นที่ Discovery: ชื่อกลุ่มดาวอยู่นอกกรอบ และข้อมูลอยู่ใน Liquid Glass */
+/* พื้นที่ข้อมูลโปร่งใส เพื่อให้เห็นภาพพื้นหลังกลุ่มดาว */
 .discovery-info {
   flex: 1 1 auto;
   min-height: 0;
   margin: 0;
-  padding: 14px 18px 22px;
+  padding: 16px 18px 22px;
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
+  justify-content: center;
   align-items: center;
-  gap: 12px;
   overflow: hidden;
   border: 0;
+  border-radius: 0;
   background: transparent;
   color: #fff;
 }
 
-/* ชื่อภาษาอังกฤษ + สัญลักษณ์และชื่อภาษาไทย อยู่นอกกรอบ */
-.discovery-heading {
-  flex: 0 0 auto;
-  width: 100%;
-  text-align: center;
-  color: #fff;
-  text-shadow: 0 2px 14px rgba(12, 4, 30, .5);
-}
-#discoveryTitle {
-  margin: 0 0 5px;
-  color: #fff;
-  font-size: clamp(30px, 7vw, 42px);
-  font-weight: 800;
-  line-height: 1.15;
-  letter-spacing: .01em;
-}
-#discoverySymbol {
-  margin: 0;
-  color: #f1e8ff;
-  font-size: clamp(19px, 4.8vw, 25px);
-  font-weight: 500;
-  line-height: 1.35;
-}
-
-/* Liquid Glass: ขนาดคงที่ ข้อความยาวเลื่อนอ่านภายในกรอบ */
+/* Liquid Glass: กรอบมีขนาดคงที่ เนื้อหายาวให้เลื่อนภายในกรอบ */
 .discovery-info-inner {
   position: relative;
   isolation: isolate;
   width: min(100%, 560px);
-  height: min(100%, 440px);
+  height: min(100%, 540px);
   max-height: 100%;
   min-height: 0;
-  flex: 1 1 440px;
-  padding: 34px 24px 28px;
+  flex: 0 1 540px;
+  padding: 30px 24px 28px;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
@@ -494,14 +470,14 @@ button:active { transform: scale(.975); }
   -webkit-overflow-scrolling: touch;
   scrollbar-width: thin;
   scrollbar-color: rgba(220, 195, 255, .48) transparent;
-  border: 1px solid rgba(232, 216, 255, .38);
-  border-radius: 30px;
+  border: 1px solid rgba(232, 216, 255, .34);
+  border-radius: 32px;
   background:
-    radial-gradient(circle at 18% 8%, rgba(197, 157, 255, .19), transparent 38%),
-    linear-gradient(145deg, rgba(30, 12, 58, .86), rgba(24, 8, 48, .82));
+    radial-gradient(circle at 18% 8%, rgba(197, 157, 255, .16), transparent 38%),
+    linear-gradient(145deg, rgba(30, 12, 58, .82), rgba(24, 8, 48, .76));
   box-shadow:
-    inset 0 1px 0 rgba(255,255,255,.22),
-    inset 0 -1px 0 rgba(205,175,255,.10),
+    inset 0 1px 0 rgba(255,255,255,.20),
+    inset 0 -1px 0 rgba(205,175,255,.08),
     0 18px 48px rgba(5, 0, 18, .34);
   backdrop-filter: blur(20px) saturate(135%);
   -webkit-backdrop-filter: blur(20px) saturate(135%);
@@ -513,55 +489,65 @@ button:active { transform: scale(.975); }
   border-radius: 99px;
 }
 
-/* ดาวตกแต่งแบบภาพอ้างอิง: ดาวใหญ่ตรงมุมบนและประกายเล็ก */
-.discovery-star {
+/* ดาวตกแต่งบนกรอบ Liquid Glass */
+.discovery-info-inner::before,
+.discovery-info-inner::after {
   position: absolute;
-  z-index: 3;
-  color: #ffc64f;
-  line-height: 1;
+  z-index: 2;
+  display: block;
+  height: auto;
+  color: #f4d58a;
+  text-shadow: 0 0 10px rgba(255, 211, 120, .55);
   pointer-events: none;
-  text-shadow: 0 0 9px rgba(255, 190, 70, .65), 0 0 18px rgba(255, 190, 70, .35);
+  line-height: 1;
 }
-.discovery-star-left { top: -12px; left: 12px; font-size: 43px; transform: rotate(-12deg); }
-.discovery-star-right { top: -12px; right: 12px; font-size: 43px; transform: rotate(12deg); }
-.discovery-star-left-small { top: 24px; left: 62px; font-size: 25px; }
-.discovery-star-right-small { top: 24px; right: 62px; font-size: 25px; }
-.discovery-meta {
-  margin: 4px 0 18px;
-  color: #fff1ce;
-  font-size: 15px;
-  line-height: 1.6;
-  letter-spacing: .03em;
+.discovery-info-inner::before {
+  content: "✦";
+  top: 14px;
+  left: 18px;
+  font-size: 27px;
 }
-.discovery-meta:empty { display: none; }
+.discovery-info-inner::after {
+  content: "✧  ·  ✦";
+  right: 18px;
+  bottom: 12px;
+  font-size: 19px;
+  letter-spacing: 8px;
+}
+#discoverySymbol {
+  margin: 0 0 8px;
+  color: #d9c8f4;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: .08em;
+}
+#discoveryTitle {
+  margin: 0 0 14px;
+  color: #fff;
+  font-size: clamp(22px, 5vw, 30px);
+  line-height: 1.35;
+}
 #discoveryDescription {
   margin: 0;
   color: #eee8f7;
-  font-size: 15px;
-  line-height: 1.9;
+  font-size: 14px;
+  line-height: 1.8;
   white-space: pre-line;
-  width: 100%;
 }
 @media (max-width: 480px) {
   #discoveryOverlay {
     inset: 64px 0 0;
     height: calc(100dvh - 64px);
   }
-  .discovery-info { padding: 10px 14px 16px; gap: 10px; }
-  #discoveryTitle { font-size: clamp(30px, 8vw, 38px); }
-  #discoverySymbol { font-size: clamp(18px, 5vw, 23px); }
+  .discovery-info { padding: 12px 14px 18px; }
   .discovery-info-inner {
-    width: 100%;
-    height: min(100%, 440px);
+    width: min(100%, 560px);
+    height: min(100%, 540px);
     max-height: 100%;
-    padding: 34px 18px 24px;
+    padding: 26px 17px 24px;
     border-radius: 28px;
   }
-  .discovery-star-left, .discovery-star-right { font-size: 36px; }
-  .discovery-star-left-small { left: 52px; font-size: 21px; }
-  .discovery-star-right-small { right: 52px; font-size: 21px; }
-  #discoveryDescription { font-size: 13px; line-height: 1.85; }
-  .discovery-meta { font-size: 13px; margin-bottom: 14px; }
+  #discoveryDescription { font-size: 13px; }
 }
 
 
@@ -699,16 +685,9 @@ body {
       <div id="videoFallback">ยังไม่มีไฟล์ Animation ของกลุ่มดาวนี้<br>นำไฟล์วิดีโอไปใส่ในโฟลเดอร์ animations แล้วตั้งชื่อให้ตรงกับราศีได้เลย</div>
     </div>
     <article class="discovery-info">
-      <header class="discovery-heading">
-        <h2 id="discoveryTitle">Aries</h2>
-        <p id="discoverySymbol">♈ กลุ่มดาวแกะ</p>
-      </header>
       <div class="discovery-info-inner">
-        <span class="discovery-star discovery-star-left" aria-hidden="true">★</span>
-        <span class="discovery-star discovery-star-right" aria-hidden="true">★</span>
-        <span class="discovery-star discovery-star-left-small" aria-hidden="true">★</span>
-        <span class="discovery-star discovery-star-right-small" aria-hidden="true">★</span>
-        <p id="discoveryMeta" class="discovery-meta"></p>
+        <p id="discoverySymbol">CONSTELLATION</p>
+        <h2 id="discoveryTitle">Constellation</h2>
         <p id="discoveryDescription"></p>
       </div>
     </article>
@@ -1078,7 +1057,6 @@ const videoFallback = document.getElementById("videoFallback");
 const discoverySymbol = document.getElementById("discoverySymbol");
 const discoveryTitle = document.getElementById("discoveryTitle");
 const discoveryDescription = document.getElementById("discoveryDescription");
-const discoveryMeta = document.getElementById("discoveryMeta");
 const closeDiscoveryButton = document.getElementById("closeDiscovery");
 
 let isDiscoveryOpen = false;
@@ -1105,15 +1083,9 @@ function openConstellationInfo(zone) {
     closeDiscoveryButton.classList.add("is-visible");
   }
 
-  // ชื่อภาษาอังกฤษและชื่อภาษาไทยแสดงอยู่นอกกรอบ Liquid Glass
-  discoveryTitle.textContent = info.name || zone.name;
-  const symbolOnly = (info.symbol || "").split(/\s+/)[0];
-  discoverySymbol.textContent =
-    [symbolOnly, info.thaiName || ""].filter(Boolean).join(" ");
-
-  // แสดงช่วงวันที่/ธาตุเฉพาะเมื่อมีข้อมูลใน constellations.js
-  discoveryMeta.textContent =
-    [info.dateRange, info.element].filter(Boolean).join("  |  ");
+  discoverySymbol.textContent = info.symbol || "CONSTELLATION";
+  discoveryTitle.textContent =
+    (info.thaiName || zone.name) + " — " + (info.name || zone.name);
   discoveryDescription.textContent =
     info.description || "ยังไม่มีคำอธิบายสำหรับกลุ่มดาวนี้";
 

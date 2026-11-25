@@ -359,7 +359,8 @@ button:active { transform: scale(.975); }
   display: none;
   flex-direction: column;
   overflow: hidden;
-  background: #080516;
+  /* ภาพพื้นหลังกลุ่มดาวที่แนบมา */
+  background: #160a2b url("constellation-background.jpg") center center / cover no-repeat;
   height: calc(100dvh - 64px);
 }
 #discoveryOverlay.is-open { display: flex; }
@@ -372,9 +373,10 @@ button:active { transform: scale(.975); }
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  background: transparent;
 }
 
-/* วิดีโออยู่ด้านบน เหมือนภาพ Reference */
+/* วิดีโออยู่ด้านบน และให้เห็นภาพพื้นหลังรอบ ๆ หากวิดีโอไม่เต็มพื้นที่ */
 .discovery-video-wrap {
   position: relative;
   flex: 0 0 auto;
@@ -382,14 +384,14 @@ button:active { transform: scale(.975); }
   aspect-ratio: 16 / 9;
   max-height: 38%;
   overflow: hidden;
-  background: #000;
+  background: transparent;
 }
 #discoveryVideo {
   display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;
-  background: #000;
+  background: transparent;
 }
 #videoFallback {
   display: none;
@@ -404,7 +406,9 @@ button:active { transform: scale(.975); }
   text-align: center;
   font-size: 14px;
   line-height: 1.7;
-  background: #160b2c;
+  background: rgba(24, 10, 45, .82);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 }
 
 /* ปุ่มปิดจะถูกแสดงหลังวิดีโอเล่นครบหนึ่งรอบ */
@@ -429,38 +433,86 @@ button:active { transform: scale(.975); }
 }
 #closeDiscovery.is-visible { display: flex; align-items: center; justify-content: center; }
 
+/* พื้นที่ข้อมูลโปร่งใส เพื่อให้เห็นภาพพื้นหลังกลุ่มดาว */
 .discovery-info {
   flex: 1 1 auto;
   min-height: 0;
   margin: 0;
-  padding: 16px;
+  padding: 16px 18px 22px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  overflow-y: auto;
+  overflow: hidden;
   border: 0;
   border-radius: 0;
-  background:
-    radial-gradient(1px 1px at 18% 25%, #ffffff16 99%, transparent),
-    radial-gradient(1px 1px at 82% 70%, #d8baff16 99%, transparent),
-    linear-gradient(135deg, #352064, #402574 55%, #2b1552);
-  background-size: 120px 120px, 160px 160px, auto;
+  background: transparent;
   color: #fff;
 }
+
+/* Liquid Glass: กรอบมีขนาดคงที่ เนื้อหายาวให้เลื่อนภายในกรอบ */
 .discovery-info-inner {
+  position: relative;
+  isolation: isolate;
   width: min(100%, 560px);
-  min-height: min(100%, 280px);
-  padding: 24px 20px;
+  height: min(100%, 540px);
+  max-height: 100%;
+  min-height: 0;
+  flex: 0 1 540px;
+  padding: 30px 24px 28px;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
   text-align: center;
-  border: 2px solid rgba(190, 170, 225, .28);
-  border-radius: 38px;
-  background: rgba(65, 43, 112, .24);
-  box-shadow: inset 0 0 20px rgba(255,255,255,.025);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(220, 195, 255, .48) transparent;
+  border: 1px solid rgba(232, 216, 255, .34);
+  border-radius: 32px;
+  background:
+    radial-gradient(circle at 18% 8%, rgba(197, 157, 255, .16), transparent 38%),
+    linear-gradient(145deg, rgba(30, 12, 58, .82), rgba(24, 8, 48, .76));
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.20),
+    inset 0 -1px 0 rgba(205,175,255,.08),
+    0 18px 48px rgba(5, 0, 18, .34);
+  backdrop-filter: blur(20px) saturate(135%);
+  -webkit-backdrop-filter: blur(20px) saturate(135%);
+}
+.discovery-info-inner::-webkit-scrollbar { width: 5px; }
+.discovery-info-inner::-webkit-scrollbar-track { background: transparent; margin: 18px 0; }
+.discovery-info-inner::-webkit-scrollbar-thumb {
+  background: rgba(220, 195, 255, .42);
+  border-radius: 99px;
+}
+
+/* ดาวตกแต่งบนกรอบ Liquid Glass */
+.discovery-info-inner::before,
+.discovery-info-inner::after {
+  position: absolute;
+  z-index: 2;
+  display: block;
+  height: auto;
+  color: #f4d58a;
+  text-shadow: 0 0 10px rgba(255, 211, 120, .55);
+  pointer-events: none;
+  line-height: 1;
+}
+.discovery-info-inner::before {
+  content: "✦";
+  top: 14px;
+  left: 18px;
+  font-size: 27px;
+}
+.discovery-info-inner::after {
+  content: "✧  ·  ✦";
+  right: 18px;
+  bottom: 12px;
+  font-size: 19px;
+  letter-spacing: 8px;
 }
 #discoverySymbol {
   margin: 0 0 8px;
@@ -487,11 +539,13 @@ button:active { transform: scale(.975); }
     inset: 64px 0 0;
     height: calc(100dvh - 64px);
   }
-  .discovery-info { padding: 14px; }
+  .discovery-info { padding: 12px 14px 18px; }
   .discovery-info-inner {
-    min-height: 0;
-    padding: 22px 16px;
-    border-radius: 34px;
+    width: min(100%, 560px);
+    height: min(100%, 540px);
+    max-height: 100%;
+    padding: 26px 17px 24px;
+    border-radius: 28px;
   }
   #discoveryDescription { font-size: 13px; }
 }
@@ -505,13 +559,13 @@ button:active { transform: scale(.975); }
    ======================================== */
 body {
   background:
-    radial-gradient(1px 1px at 12% 18%, #ffffffa8 99%, transparent),
-    radial-gradient(1px 1px at 76% 23%, #d9baff99 99%, transparent),
-    radial-gradient(1.5px 1.5px at 42% 72%, #ffffff88 99%, transparent),
-    radial-gradient(1px 1px at 88% 83%, #cba8ff99 99%, transparent),
-    radial-gradient(ellipse at 78% 10%, #3b075f 0%, transparent 45%),
-    radial-gradient(ellipse at 15% 90%, #190044 0%, transparent 55%),
-    #110026;
+    radial-gradient(1px 1px at 12% 18%, rgba(255,255,255,.52) 99%, transparent),
+    radial-gradient(1px 1px at 76% 23%, rgba(217,186,255,.48) 99%, transparent),
+    radial-gradient(1.5px 1.5px at 42% 72%, rgba(255,255,255,.34) 99%, transparent),
+    radial-gradient(1px 1px at 88% 83%, rgba(203,168,255,.42) 99%, transparent),
+    radial-gradient(ellipse at 78% 10%, #32134f 0%, transparent 48%),
+    radial-gradient(ellipse at 15% 90%, #21103d 0%, transparent 58%),
+    #160a2b;
   background-size: 130px 130px, 170px 170px, 210px 210px, 150px 150px, auto, auto, auto;
 }
 

@@ -102,18 +102,18 @@ function renderDashboard(eventMessage = null) {
         const slotStr = ` P${String(i).padStart(2, "0")} `;
 
         if (!client) {
-            console.log(`${slotStr} | ⚪ ว่าง       | -`);
+            console.log(`${slotStr} | ⚪ Available       | -`);
         } else {
-            const camStatus = client.isCameraActive ? "🟢 เปิดกล้อง  " : "🟡 รอเปิดกล้อง";
+            const camStatus = client.isCameraActive ? "🟢 Open Camera  " : "🟡 Waiting";
             const displayName = client.playerName || `Player ${i}`;
             console.log(`${slotStr} | ${camStatus} | ${displayName}`);
         }
     }
 
     console.log("--------------------------------------------------");
-    console.log(" กิจกรรมล่าสุด (Recent Events):");
+    console.log(" Recent Events:");
     if (recentLogs.length === 0) {
-        console.log("  - รอผู้เล่นเชื่อมต่อ...");
+        console.log("  - waiting player connect...");
     } else {
         recentLogs.forEach(log => console.log(`  ${log}`));
     }
@@ -141,7 +141,7 @@ function releasePlayer(ws) {
 
     occupiedSlots.delete(id);
     ws.playerId = null;
-    renderDashboard(`${label} ออกจากระบบแล้ว`);
+    renderDashboard(`${label} disconnect`);
 }
 
 // ========================================
@@ -160,7 +160,7 @@ wss.on("connection", (ws) => {
     if (playerId === null) {
         ws.send(JSON.stringify({
             type: "error",
-            message: "ห้องเต็มแล้ว"
+            message: "Full"
         }));
         ws.close(1013, "Server full");
         return;
@@ -171,7 +171,7 @@ wss.on("connection", (ws) => {
     ws.isCameraActive = false;
     ws.isAlive = true;
 
-    renderDashboard(`Player ${playerId} เชื่อมต่อเข้ามาใหม่`);
+    renderDashboard(`Player ${playerId} connect`);
 
     // เริ่มต้น inactive และส่งข้อมูลสีขอบประจำ ID ให้ TD
     sendOSC(`/player/${playerId}/active`, "i", 0);
@@ -201,7 +201,7 @@ wss.on("connection", (ws) => {
             if (data.type === "name") {
                 ws.playerName = cleanPlayerName(data.name, `Player ${playerId}`);
                 sendOSC(`/player/${playerId}/name`, "s", ws.playerName);
-                renderDashboard(`Player ${playerId} ตั้งชื่อเป็น "${ws.playerName}"`);
+                renderDashboard(`Player ${playerId} rename "${ws.playerName}"`);
                 return;
             }
 
@@ -210,7 +210,7 @@ wss.on("connection", (ws) => {
                 const active = data.active ? 1 : 0;
                 ws.isCameraActive = Boolean(active);
                 sendOSC(`/player/${playerId}/active`, "i", active);
-                const stateText = active ? "เปิดกล้อง (Active)" : "ปิดกล้อง/พักวงแสง (Inactive)";
+                const stateText = active ? "Active Camera" : "Inactive Animation";
                 renderDashboard(`${formatPlayerLabel(ws)} -> ${stateText}`);
                 return;
             }

@@ -224,7 +224,12 @@ button:disabled {
   box-shadow: inset 0 1px 0 rgba(230, 208, 255, 0.08), 0 2px 8px rgba(0, 0, 0, 0.15);
   backdrop-filter: blur(15px) saturate(125%);
   -webkit-backdrop-filter: blur(15px) saturate(125%);
+  cursor: pointer;
 }
+#playerBar:active {
+  transform: scale(0.97);
+}
+  
 #playerInfo {
   display: block;
   color: rgba(246, 238, 255, .94) !important;
@@ -794,19 +799,25 @@ function displayCoordinates(x, y) {
 const WS_ENDPOINT =
   "wss://russell-associates-metals-conditioning.trycloudflare.com";
 
+const PLAYER_NAME_SESSION_KEY = "lts_player_name";
+const PLAYER_PROMPTED_SESSION_KEY = "lts_player_prompted";
+
 let socket = null;
 let playerId = null;
-let playerDisplayName = "Player";
+let playerDisplayName = sessionStorage.getItem(PLAYER_NAME_SESSION_KEY) || "Player";
 let lastXYSendTime = 0;
+
+const playerBar = document.getElementById("playerBar");
 
 function updatePlayerInfo(connectionText = "Connected") {
   const fallback = playerId ? `Player ${playerId}` : "Player";
   const shownName = playerDisplayName || fallback;
-  playerInfo.textContent = `${shownName} · ${connectionText}`;
+  playerInfo.textContent = `${shownName} · ${connectionText} ✎`;
 }
 
-function openPlayerNameDialog() {
-  playerNameInput.value = "";
+function openPlayerNameDialog(prefillCurrent = false) {
+  const savedName = sessionStorage.getItem(PLAYER_NAME_SESSION_KEY) || "";
+  playerNameInput.value = prefillCurrent ? savedName : "";
   nameDialog.classList.add("is-open");
   nameDialog.setAttribute("aria-hidden", "false");
   setTimeout(() => playerNameInput.focus(), 0);
@@ -817,10 +828,16 @@ function closePlayerNameDialog() {
   nameDialog.setAttribute("aria-hidden", "true");
 }
 
-function sendPlayerName(name) {
+function sendPlayerName(name, saveToSession = false) {
   if (!playerId) return false;
   const cleaned = String(name || "").replace(/[\u0000-\u001f\u007f]/g, "").trim().slice(0, 24);
   playerDisplayName = cleaned || `Player ${playerId}`;
+
+  if (saveToSession && cleaned) {
+    sessionStorage.setItem(PLAYER_NAME_SESSION_KEY, cleaned);
+  }
+  sessionStorage.setItem(PLAYER_PROMPTED_SESSION_KEY, "1");
+
   wsSend({ type: "name", name: playerDisplayName });
   updatePlayerInfo();
   return true;
@@ -835,15 +852,21 @@ function savePlayerName() {
     return;
   }
   playerNameInput.setCustomValidity("");
-  sendPlayerName(cleaned);
+  sendPlayerName(cleaned, true);
   closePlayerNameDialog();
 }
 
 function skipPlayerName() {
+  sessionStorage.removeItem(PLAYER_NAME_SESSION_KEY);
   const defaultName = playerId ? `Player ${playerId}` : "Player";
-  sendPlayerName(defaultName);
+  sendPlayerName(defaultName, false);
   closePlayerNameDialog();
 }
+
+// กดที่แถบชื่อด้านล่างเพื่อเปลี่ยนชื่อได้ตลอดเวลา (สำหรับส่งต่อให้เพื่อนเล่น)
+playerBar.addEventListener("click", () => {
+  openPlayerNameDialog(true);
+});
 
 savePlayerNameButton.addEventListener("click", savePlayerName);
 skipPlayerNameButton.addEventListener("click", skipPlayerName);
@@ -871,11 +894,23 @@ function connectWebSocket() {
 
       if (data.type === "welcome") {
         playerId = data.playerId;
-        playerDisplayName = `Player ${playerId}`;
-        updatePlayerInfo();
-        openPlayerNameDialog();
 
-        // เปิดวงแสงเฉพาะตอนเปิดกล้องและไม่ได้เปิดหน้าอนิเมชันอยู่
+        const savedName = sessionStorage.getItem(PLAYER_NAME_SESSION_KEY);
+        const alreadyPrompted = sessionStorage.getItem(PLAYER_PROMPTED_SESSION_KEY) === "1";
+
+        if (savedName) {
+          // รีโหลดหน้าเว็บในแท็บเดิม: ใช้ชื่อเดิมส่งเข้า TD ทันทีโดยไม่เด้งถามซ้ำ
+          sendPlayerName(savedName, true);
+        } else if (alreadyPrompted) {
+          // เคยกด Skip ไปแล้วในแท็บเดิม: ใช้ชื่อ Player X ต่อเลยโดยไม่เด้งถามซ้ำ
+          sendPlayerName(`Player ${playerId}`, false);
+        } else {
+          // เปิดหน้าเว็บครั้งแรก (ผู้เล่นคนใหม่): เด้งถามชื่อตามปกติ
+          playerDisplayName = `Player ${playerId}`;
+          updatePlayerInfo();
+          openPlayerNameDialog(false);
+        }
+
         if (stream && !isDiscoveryOpen) sendPlayerActive(true);
 
       } else if (data.type === "error") {

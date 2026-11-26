@@ -39,7 +39,6 @@ body {
   background-size: 130px 130px, 170px 170px, 210px 210px, 150px 150px, auto, auto, auto;
 }
 
-/* ล็อกแถบ Header ติดด้านบนเสมอ และกำหนดความสูงคงที่ 64px */
 header {
   position: sticky;
   top: 0;
@@ -67,7 +66,6 @@ h1 {
   letter-spacing: .2px;
 }
 
-/* ให้ main ยืดเต็มความสูงที่เหลือของหน้าจอ เพื่อดึงส่วนล่างลงมาจนสุดขอบ */
 main {
   flex: 1 0 auto;
   display: flex;
@@ -124,7 +122,6 @@ canvas#canvasOutput {
 }
 .coordinates { display: none; }
 
-/* ปุ่ม Trigger Animation โทน #190A35 */
 #runAnimation {
   display: none;
   position: absolute;
@@ -145,7 +142,6 @@ canvas#canvasOutput {
 }
 #runAnimation:disabled { opacity: .5; }
 
-/* แถบควบคุมด้านล่าง ยืดลงไปปิดพื้นที่จนสุดขอบล่าง */
 .controls {
   flex: 1 0 auto;
   margin: 0;
@@ -229,7 +225,6 @@ button:disabled {
 #playerBar:active {
   transform: scale(0.97);
 }
-  
 #playerInfo {
   display: block;
   color: rgba(246, 238, 255, .94) !important;
@@ -240,7 +235,6 @@ button:disabled {
   white-space: nowrap;
 }
 
-/* หน้าต่างกรอกชื่อผู้เล่น โทน #190A35 */
 #nameDialog {
   position: fixed;
   inset: 0;
@@ -319,7 +313,6 @@ button:disabled {
   font-size: 20px;
 }
 
-/* ส่วนสถานะและข้อมูลการตรวจจับด้านล่างสุด ใช้โทน #190A35 ต่อเนื่องกัน */
 #status {
   margin: 0;
   padding: 8px 12px 6px;
@@ -356,7 +349,6 @@ button:disabled {
 
 /* ========================================
    CONSTELLATION DISCOVERY OVERLAY
-   ล็อกตำแหน่งชิดใต้ Header (64px) เสมอ
    ======================================== */
 #discoveryOverlay {
   position: fixed;
@@ -455,7 +447,6 @@ button:disabled {
   color: #fff;
 }
 
-/* กรอบข้อมูล Liquid Glass โทน #190A35 */
 .discovery-info-inner {
   position: relative;
   isolation: isolate;
@@ -637,6 +628,7 @@ const coordY = document.getElementById("coordY");
 const detectedStatus = document.getElementById("detectedStatus");
 const trackingStatus = document.getElementById("trackingStatus");
 const playerInfo = document.getElementById("playerInfo");
+const playerBar = document.getElementById("playerBar");
 const nameDialog = document.getElementById("nameDialog");
 const playerNameInput = document.getElementById("playerNameInput");
 const savePlayerNameButton = document.getElementById("savePlayerName");
@@ -807,8 +799,6 @@ let playerId = null;
 let playerDisplayName = sessionStorage.getItem(PLAYER_NAME_SESSION_KEY) || "Player";
 let lastXYSendTime = 0;
 
-const playerBar = document.getElementById("playerBar");
-
 function updatePlayerInfo(connectionText = "Connected") {
   const fallback = playerId ? `Player ${playerId}` : "Player";
   const shownName = playerDisplayName || fallback;
@@ -863,7 +853,6 @@ function skipPlayerName() {
   closePlayerNameDialog();
 }
 
-// กดที่แถบชื่อด้านล่างเพื่อเปลี่ยนชื่อได้ตลอดเวลา (สำหรับส่งต่อให้เพื่อนเล่น)
 playerBar.addEventListener("click", () => {
   openPlayerNameDialog(true);
 });
@@ -899,13 +888,10 @@ function connectWebSocket() {
         const alreadyPrompted = sessionStorage.getItem(PLAYER_PROMPTED_SESSION_KEY) === "1";
 
         if (savedName) {
-          // รีโหลดหน้าเว็บในแท็บเดิม: ใช้ชื่อเดิมส่งเข้า TD ทันทีโดยไม่เด้งถามซ้ำ
           sendPlayerName(savedName, true);
         } else if (alreadyPrompted) {
-          // เคยกด Skip ไปแล้วในแท็บเดิม: ใช้ชื่อ Player X ต่อเลยโดยไม่เด้งถามซ้ำ
           sendPlayerName(`Player ${playerId}`, false);
         } else {
-          // เปิดหน้าเว็บครั้งแรก (ผู้เล่นคนใหม่): เด้งถามชื่อตามปกติ
           playerDisplayName = `Player ${playerId}`;
           updatePlayerInfo();
           openPlayerNameDialog(false);
@@ -974,7 +960,6 @@ const closeDiscoveryButton = document.getElementById("closeDiscovery");
 
 let isDiscoveryOpen = false;
 
-// โหลดวิดีโอทั้ง 12 ราศีเก็บไว้ในแคชล่วงหน้าทันทีที่เข้าเว็บ
 const preloadedVideos = {};
 function preloadAllConstellationVideos() {
   if (typeof CONSTELLATION_INFO === "undefined") return;
@@ -997,11 +982,9 @@ function openConstellationInfo(zone) {
   const info = CONSTELLATION_INFO[zone.id];
   isDiscoveryOpen = true;
 
-  // ปิดวงแสงใน TouchDesigner ทันทีเมื่อเปิดอนิเมชัน
   sendPlayerActive(false);
   window.scrollTo({ top: 0, behavior: "instant" });
 
-  // เปิดหน้าต่างและใส่ข้อความขึ้นมาก่อนทันที ไม่ต้องรอวิดีโอโหลด
   discoverySymbol.textContent = info.symbol || "CONSTELLATION";
   discoveryTitle.textContent =
     (info.thaiName || zone.name) + " — " + (info.name || zone.name);
@@ -1097,7 +1080,6 @@ function closeConstellationInfo() {
   discoveryVideo.load();
   closeDiscoveryButton.classList.remove("is-visible");
 
-  // เปิดวงแสงกลับมาอีกครั้งหากกล้องยังเปิดอยู่
   if (stream && isProcessing) {
     sendPlayerActive(true);
   }
@@ -1115,8 +1097,8 @@ runAnimationButton.addEventListener("click", () => {
 
 closeDiscoveryButton.addEventListener("click", closeConstellationInfo);
 
-// เริ่มเชื่อมต่อ
 connectWebSocket();
+
 // ========================================
 // GEOMETRY
 // ========================================
@@ -1388,11 +1370,6 @@ function initializeTracking(gray, quad) {
 
   displayCoordinates(0.5, 0.5);
   sendXYToTouchDesigner(0.5, 0.5);
-
-  console.log(
-    "Screen locked. Feature points:",
-    previousPoints.rows
-  );
 
   return true;
 }

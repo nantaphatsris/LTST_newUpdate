@@ -450,18 +450,20 @@ button:disabled {
 .discovery-info-inner {
   position: relative;
   isolation: isolate;
-  width: min(100%, 460px);
-  height: min(100%, 440px);
-  max-height: 100%;
+  width: 340px;                /* <-- ปรับความกว้างกล่องตรงนี้ (เช่น 320px, 360px, 400px) */
+  height: 260px;               /* <-- ปรับความสูงกล่องตรงนี้ (เช่น 300px, 360px, 420px) */
+  max-width: 92%;              /* กันกล่องกว้างล้นขอบจอมือถือเล็กๆ */
+  max-height: 85%;             /* กันกล่องสูงล้นพื้นที่ด้านล่าง */
   min-height: 0;
-  flex: 0 1 540px;
-  padding: 30px 24px 28px;
+  flex: 0 0 360px;             /* <-- ใส่ตัวเลขเดียวกับ height เพื่อให้ขนาดคงที่ */
+  padding: 24px 20px 22px;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
   text-align: center;
   overflow-y: auto;
+  }
   overscroll-behavior: contain;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: thin;
@@ -536,15 +538,16 @@ button:disabled {
   }
   .discovery-info { padding: 12px 14px 18px; }
   .discovery-info-inner {
-    width: min(100%, 560px);
-    height: min(100%, 540px);
-    max-height: 100%;
-    padding: 26px 17px 24px;
-    border-radius: 28px;
+    width: 320px;              /* <-- ปรับความกว้างบนมือถือตรงนี้ */
+    height: 240px;             /* <-- ปรับความสูงบนมือถือตรงนี้ */
+    max-width: 92%;
+    max-height: 85%;
+    flex: 0 0 340px;           /* <-- ใส่ตัวเลขเดียวกับ height ด้านบน */
+    padding: 22px 16px 20px;
+    border-radius: 26px;
   }
   #discoveryDescription { font-size: 13px; }
 }
-
 /* ========================================
    TACTILE BUTTON PRESS FEEDBACK (รองรับมือถือ + คอมชัดเจน)
    ======================================== */

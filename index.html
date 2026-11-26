@@ -436,7 +436,7 @@ button:disabled {
   flex: 1 1 auto;
   min-height: 0;
   margin: 0;
-  padding: 10px 16px 22px;     /* 20px ตัวหลังสุด = ระยะห่างกล่องจากขอบจอล่าง */
+  padding: 10px 16px 30px;     /* 20px ตัวหลังสุด = ระยะห่างกล่องจากขอบจอล่าง */
   display: flex;
   flex-direction: column;
   justify-content: flex-end;     /* ดันทั้งหัวข้อและกล่องลงมาด้านล่าง */
@@ -453,14 +453,14 @@ button:disabled {
 .discovery-header-outside {
   text-align: center;
   margin-bottom: 15px;           /* ระยะห่างระหว่างชื่อราศีไทยกับขอบบนกล่อง */
-  padding: 0 12px;
+  padding: 0 15px;
   text-shadow: 0 2px 12px rgba(10, 3, 24, 0.85);
 }
 
 #discoveryTitleEn {
   margin: 0;
   color: #ffffff;                /* สีขาว */
-  font-size: clamp(26px, 6vw, 34px); /* ตัวใหญ่ */
+  font-size: clamp(30px, 10vw, 38px); /* ตัวใหญ่ */
   font-weight: 700;
   line-height: 1.1;
   letter-spacing: 0.03em;
@@ -478,13 +478,13 @@ button:disabled {
 .discovery-info-inner {
   position: relative;
   isolation: isolate;
-  width: 330px;                  /* ความกว้างกล่อง */
-  height: 280px;                 /* ความสูงกล่อง */
+  width: 350px;                  /* ความกว้างกล่อง */
+  height: 300px;                 /* ความสูงกล่อง */
   max-width: 90%;
-  max-height: 82%;
+  max-height: 90%;
   min-height: 0;
-  flex: 0 0 280px;               /* ใส่เลขเดียวกับ height ด้านบนเสมอ */
-  padding: 18px 18px 22px;
+  flex: 0 0 300px;               /* ใส่เลขเดียวกับ height ด้านบนเสมอ */
+  padding: 18px 18px 30px;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
@@ -543,7 +543,7 @@ button:disabled {
   width: 100%;
   margin: 0 0 16px;              /* เว้น 1 บรรทัดก่อนขึ้นรายละเอียดยาว */
   color: #e4d4ff;                /* สีม่วงที่อ่อนกว่าชื่อราศีไทย */
-  font-size: 14px;               /* ตัวเล็กกว่าราศีกุมภ์หน่อย */
+  font-size: 15px;               /* ตัวเล็กกว่าราศีกุมภ์หน่อย */
   font-weight: 500;
   text-align: center;            /* ตัวอักษรอยู่กลาง */
   line-height: 1.4;
@@ -553,7 +553,7 @@ button:disabled {
   width: 100%;
   margin: 0 0 16px;              /* เว้น 1 บรรทัดก่อนขึ้นช่วงที่ 3 */
   color: #e4d4ff;                /* สีเดียวกับบรรทัดแรก */
-  font-size: 13px;               /* ตัวเล็กกว่าบรรทัดแรก */
+  font-size: 14px;               /* ตัวเล็กกว่าบรรทัดแรก */
   font-weight: 300;
   text-align: left;              /* ตัวอักษรชิดซ้าย */
   line-height: 1.65;
@@ -565,7 +565,7 @@ button:disabled {
   width: 100%;
   margin: 0;
   color: #e4d4ff;                /* สีเดียวกับช่วงที่ 2 */
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 400;
   text-align: left;            /* ตัวอักษรอยู่กลาง */
   line-height: 1.6;
@@ -584,12 +584,12 @@ button:disabled {
   }
   .discovery-info { padding: 10px 14px 18px; }
   .discovery-info-inner {
-    width: 320px;
-    height: 280px;
+    width: 350px;
+    height: 300px;
     max-width: 90%;
-    max-height: 82%;
-    flex: 0 0 280px;
-    padding: 18px 16px 22px;
+    max-height: 90%;
+    flex: 0 0 300px;
+    padding: 18px 16px 30px;
   }
   #discoveryMeta { font-size: 13.5px; }
   #discoveryDescription,

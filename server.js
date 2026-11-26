@@ -5,7 +5,6 @@ const PORT = 8080;
 const MAX_PLAYERS = 10;
 
 // สีเส้นขอบประจำ Player ID (RGB 0-1) คงที่และไม่ซ้ำกัน
-// สีนี้ใช้เฉพาะเส้นขอบ ไม่ได้เปลี่ยนสีวงกลมด้านใน
 const PLAYER_OUTLINE_COLORS = {
     1:  { r: 1.00, g: 0.20, b: 0.20 }, // red
     2:  { r: 0.10, g: 0.75, b: 1.00 }, // cyan
@@ -34,8 +33,7 @@ let oscReady = false;
 
 udpPort.on("ready", () => {
     oscReady = true;
-    console.log("OSC READY");
-    console.log("TouchDesigner: 127.0.0.1:9000");
+    renderDashboard("OSC READY (TouchDesigner: 127.0.0.1:9000)");
 });
 
 udpPort.on("error", (err) => {
@@ -56,7 +54,6 @@ function sendPlayerOutlineColor(playerId) {
     const color = PLAYER_OUTLINE_COLORS[playerId];
     if (!color) return;
 
-    // ส่ง RGB แยก channel ให้ TD ใช้กำหนดสี Outline
     sendOSC(`/player/${playerId}/outline/r`, "f", color.r);
     sendOSC(`/player/${playerId}/outline/g`, "f", color.g);
     sendOSC(`/player/${playerId}/outline/b`, "f", color.b);
@@ -71,15 +68,62 @@ function cleanPlayerName(value, fallback) {
 }
 
 // ========================================
-// PLAYER MANAGEMENT
+// PLAYER MANAGEMENT & CMD DASHBOARD
 // ========================================
 
-const occupiedSlots = new Set();
+const occupiedSlots = new Map(); // เก็บ { playerId => ws }
+const recentLogs = [];
 
-function allocatePlayer() {
+function formatPlayerLabel(ws) {
+    if (!ws || !ws.playerId) return "Unknown";
+    return ws.playerName && ws.playerName !== `Player ${ws.playerId}`
+        ? `Player ${ws.playerId} (${ws.playerName})`
+        : `Player ${ws.playerId}`;
+}
+
+function renderDashboard(eventMessage = null) {
+    if (eventMessage) {
+        const time = new Date().toLocaleTimeString("th-TH", { hour12: false });
+        recentLogs.push(`[${time}] ${eventMessage}`);
+        if (recentLogs.length > 8) recentLogs.shift(); // เก็บประวัติล่าสุด 8 บรรทัด
+    }
+
+    console.clear();
+    console.log("==================================================");
+    console.log("       NIGHT SKY MULTIPLAYER SERVER (CMD)         ");
+    console.log("==================================================");
+    console.log(`WebSocket Port: ${PORT} | Active Players: ${occupiedSlots.size}/${MAX_PLAYERS}`);
+    console.log("--------------------------------------------------");
+    console.log(" SLOT | STATUS       | PLAYER NAME");
+    console.log("--------------------------------------------------");
+
+    for (let i = 1; i <= MAX_PLAYERS; i++) {
+        const client = occupiedSlots.get(i);
+        const slotStr = ` P${String(i).padStart(2, "0")} `;
+
+        if (!client) {
+            console.log(`${slotStr} | ⚪ ว่าง       | -`);
+        } else {
+            const camStatus = client.isCameraActive ? "🟢 เปิดกล้อง  " : "🟡 รอเปิดกล้อง";
+            const displayName = client.playerName || `Player ${i}`;
+            console.log(`${slotStr} | ${camStatus} | ${displayName}`);
+        }
+    }
+
+    console.log("--------------------------------------------------");
+    console.log(" กิจกรรมล่าสุด (Recent Events):");
+    if (recentLogs.length === 0) {
+        console.log("  - รอผู้เล่นเชื่อมต่อ...");
+    } else {
+        recentLogs.forEach(log => console.log(`  ${log}`));
+    }
+    console.log("==================================================");
+}
+
+function allocatePlayer(ws) {
     for (let i = 1; i <= MAX_PLAYERS; i++) {
         if (!occupiedSlots.has(i)) {
-            occupiedSlots.add(i);
+            occupiedSlots.set(i, ws);
             return i;
         }
     }
@@ -90,12 +134,14 @@ function releasePlayer(ws) {
     const id = ws.playerId;
     if (!id) return;
 
+    const label = formatPlayerLabel(ws);
+
     sendOSC(`/player/${id}/active`, "i", 0);
     sendOSC(`/player/${id}/name`, "s", "");
 
     occupiedSlots.delete(id);
     ws.playerId = null;
-    console.log(`Player ${id} disconnected`);
+    renderDashboard(`${label} ออกจากระบบแล้ว`);
 }
 
 // ========================================
@@ -105,15 +151,11 @@ function releasePlayer(ws) {
 const wss = new WebSocket.Server({ port: PORT });
 
 wss.on("listening", () => {
-    console.log("==============================");
-    console.log(" NIGHT SKY MULTIPLAYER SERVER");
-    console.log("==============================");
-    console.log(`WebSocket port: ${PORT}`);
-    console.log(`Max players: ${MAX_PLAYERS}`);
+    renderDashboard(`Server started on port ${PORT}`);
 });
 
 wss.on("connection", (ws) => {
-    const playerId = allocatePlayer();
+    const playerId = allocatePlayer(ws);
 
     if (playerId === null) {
         ws.send(JSON.stringify({
@@ -126,9 +168,10 @@ wss.on("connection", (ws) => {
 
     ws.playerId = playerId;
     ws.playerName = `Player ${playerId}`;
+    ws.isCameraActive = false;
     ws.isAlive = true;
 
-    console.log(`${ws.playerName} connected`);
+    renderDashboard(`Player ${playerId} เชื่อมต่อเข้ามาใหม่`);
 
     // เริ่มต้น inactive และส่งข้อมูลสีขอบประจำ ID ให้ TD
     sendOSC(`/player/${playerId}/active`, "i", 0);
@@ -158,15 +201,17 @@ wss.on("connection", (ws) => {
             if (data.type === "name") {
                 ws.playerName = cleanPlayerName(data.name, `Player ${playerId}`);
                 sendOSC(`/player/${playerId}/name`, "s", ws.playerName);
-                console.log(`Player ${playerId} name: ${ws.playerName}`);
+                renderDashboard(`Player ${playerId} ตั้งชื่อเป็น "${ws.playerName}"`);
                 return;
             }
 
             // CAMERA ACTIVE / INACTIVE
             if (data.type === "active") {
                 const active = data.active ? 1 : 0;
+                ws.isCameraActive = Boolean(active);
                 sendOSC(`/player/${playerId}/active`, "i", active);
-                console.log(`Player ${playerId} camera active: ${active}`);
+                const stateText = active ? "เปิดกล้อง (Active)" : "ปิดกล้อง/พักวงแสง (Inactive)";
+                renderDashboard(`${formatPlayerLabel(ws)} -> ${stateText}`);
                 return;
             }
 
@@ -185,7 +230,7 @@ wss.on("connection", (ws) => {
 
             // RUN CONSTELLATION ANIMATION (ระบบเดิม)
             if (data.type === "runAnimation") {
-                console.log(`Player ${playerId} triggered animation`);
+                renderDashboard(`${formatPlayerLabel(ws)} กดเล่นอนิเมชัน`);
                 sendOSC("/animation/run", "i", 1);
                 setTimeout(() => {
                     sendOSC("/animation/run", "i", 0);
@@ -201,7 +246,7 @@ wss.on("connection", (ws) => {
     ws.on("close", () => releasePlayer(ws));
 
     ws.on("error", (err) => {
-        console.error(`Player ${playerId} WebSocket error:`, err.message);
+        renderDashboard(`${formatPlayerLabel(ws)} เกิดข้อผิดพลาด: ${err.message}`);
     });
 });
 

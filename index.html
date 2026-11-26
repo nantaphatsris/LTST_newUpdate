@@ -667,8 +667,9 @@ button:not(:disabled).is-pressed {
 </style>
 
 <script async
-  src="https://docs.opencv.org/4.x/opencv.js"
-  onload="onOpenCvReady();">
+  src="./opencv.js"
+  onload="onOpenCvReady();"
+  onerror="loadOpenCvFallback();">
 </script>
 </head>
 
@@ -880,25 +881,43 @@ function updateZoneDetection(x, y) {
 // OPENCV READY
 // ========================================
 
+function activateCameraButton() {
+  if (isOpenCvReady) return;
+  isOpenCvReady = true;
+  status.textContent = "OpenCV พร้อมใช้งาน";
+  button.textContent = "Open Camera";
+  button.disabled = false;
+}
+
 function onOpenCvReady() {
   if (typeof cv === "undefined") return;
 
-  cv.onRuntimeInitialized = () => {
-    if (isOpenCvReady) return;
-
-    isOpenCvReady = true;
-    status.textContent = "OpenCV พร้อมใช้งาน";
-    button.textContent = "Open Camera";
-    button.disabled = false;
-  };
-
-  if (cv.Mat && !isOpenCvReady) {
-    isOpenCvReady = true;
-    status.textContent = "OpenCV พร้อมใช้งาน";
-    button.textContent = "Open Camera";
-    button.disabled = false;
+  if (cv.Mat && typeof cv.imread === "function") {
+    activateCameraButton();
+    return;
   }
+
+  cv.onRuntimeInitialized = activateCameraButton;
 }
+
+let fallbackLoaded = false;
+function loadOpenCvFallback() {
+  if (fallbackLoaded || isOpenCvReady) return;
+  fallbackLoaded = true;
+  status.textContent = "ไม่พบ opencv.js ในเครื่อง กำลังโหลดจากเซิร์ฟเวอร์สำรอง...";
+  const s = document.createElement("script");
+  s.async = true;
+  s.src = "https://cdn.jsdelivr.net/npm/@techstark/opencv-js@4.9.0-release.3/dist/opencv.js";
+  s.onload = onOpenCvReady;
+  document.head.appendChild(s);
+}
+
+const cvCheckInterval = setInterval(() => {
+  if (typeof cv !== "undefined" && cv.Mat && typeof cv.imread === "function") {
+    activateCameraButton();
+    clearInterval(cvCheckInterval);
+  }
+}, 300);
 
 function setTargetStatus(found) {
   detectedStatus.textContent = found ? "LOCKED" : "NO";
@@ -2167,4 +2186,3 @@ document.addEventListener("pointerdown", (e) => {
 </script>
 </body>
 </html>
-```[cite: 3]

@@ -452,7 +452,7 @@ button:disabled {
 /* --- ช่วงที่ 1: หัวข้อชื่อราศี (อยู่นอกกรอบ เหนือกล่อง Liquid Glass) --- */
 .discovery-header-outside {
   text-align: center;
-  margin-bottom: 13px;           /* ระยะห่างระหว่างชื่อราศีไทยกับขอบบนกล่อง */
+  margin-bottom: 14px;           /* ระยะห่างระหว่างชื่อราศีไทยกับขอบบนกล่อง */
   padding: 0 14px;
   text-shadow: 0 2px 12px rgba(10, 3, 24, 0.85);
 }
@@ -553,9 +553,9 @@ button:disabled {
 /* --- ช่วงที่ 2: วันที่/ธาตุ + รายละเอียดยาว --- */
 #discoveryMeta {
   width: 100%;
-  margin: 0 0 14px;              /* เว้น 1 บรรทัดก่อนขึ้นรายละเอียดยาว */
+  margin: 0 0 15px;              /* เว้น 1 บรรทัดก่อนขึ้นรายละเอียดยาว */
   color: #e4d4ff;                /* สีม่วงที่อ่อนกว่าชื่อราศีไทย */
-  font-size: 20px;               /* ตัวเล็กกว่าราศีกุมภ์หน่อย */
+  font-size: 17px;               /* ตัวเล็กกว่าราศีกุมภ์หน่อย */
   font-weight: 500;
   text-align: center;            /* ตัวอักษรอยู่กลาง */
   line-height: 1.4;
@@ -563,9 +563,9 @@ button:disabled {
 
 #discoveryDescription {
   width: 100%;
-  margin: 0 0 14px;              /* เว้น 1 บรรทัดก่อนขึ้นช่วงที่ 3 */
+  margin: 0 0 15px;              /* เว้น 1 บรรทัดก่อนขึ้นช่วงที่ 3 */
   color: #e4d4ff;                /* สีเดียวกับบรรทัดแรก */
-  font-size: 18px;               /* ตัวเล็กกว่าบรรทัดแรก */
+  font-size: 16px;               /* ตัวเล็กกว่าบรรทัดแรก */
   font-weight: 300;
   text-align: left;              /* ตัวอักษรชิดซ้าย */
   line-height: 1.65;
@@ -577,7 +577,7 @@ button:disabled {
   width: 100%;
   margin: 0;
   color: #e4d4ff;                /* สีเดียวกับช่วงที่ 2 */
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 400;
   text-align: left;
   line-height: 1.6;
@@ -665,6 +665,11 @@ button:not(:disabled).is-pressed {
   filter: brightness(1.32) !important;
 }
 </style>
+
+<script async
+  src="https://docs.opencv.org/4.x/opencv.js"
+  onload="onOpenCvReady();">
+</script>
 </head>
 
 <body>
@@ -872,65 +877,29 @@ function updateZoneDetection(x, y) {
 }
 
 // ========================================
-// OPENCV READY (พร้อมตัวตรวจสอบอัตโนมัติและ CDN สำรอง)
+// OPENCV READY
 // ========================================
-
-function activateCameraButton() {
-  if (isOpenCvReady) return;
-  isOpenCvReady = true;
-  status.textContent = "OpenCV พร้อมใช้งาน";
-  button.textContent = "Open Camera";
-  button.disabled = false;
-}
 
 function onOpenCvReady() {
   if (typeof cv === "undefined") return;
 
-  if (cv.Mat && typeof cv.imread === "function") {
-    activateCameraButton();
-    return;
-  }
+  cv.onRuntimeInitialized = () => {
+    if (isOpenCvReady) return;
 
-  cv.onRuntimeInitialized = activateCameraButton;
-}
-
-const cvCheckInterval = setInterval(() => {
-  if (typeof cv !== "undefined" && cv.Mat && typeof cv.imread === "function") {
-    activateCameraButton();
-    clearInterval(cvCheckInterval);
-  }
-}, 300);
-
-function loadOpenCvScript(src, fallbackSrc) {
-  const script = document.createElement("script");
-  script.async = true;
-  script.src = src;
-
-  let switched = false;
-  const switchToFallback = () => {
-    if (switched || isOpenCvReady || !fallbackSrc) return;
-    switched = true;
-    status.textContent = "กำลังเปลี่ยนเซิร์ฟเวอร์สำรองสำหรับ OpenCV...";
-    loadOpenCvScript(fallbackSrc, null);
+    isOpenCvReady = true;
+    status.textContent = "OpenCV พร้อมใช้งาน";
+    button.textContent = "Open Camera";
+    button.disabled = false;
   };
 
-  script.onload = () => onOpenCvReady();
-  script.onerror = switchToFallback;
-
-  setTimeout(() => {
-    if (!isOpenCvReady && typeof cv === "undefined") {
-      switchToFallback();
-    }
-  }, 6000);
-
-  document.head.appendChild(script);
+  if (cv.Mat && !isOpenCvReady) {
+    isOpenCvReady = true;
+    status.textContent = "OpenCV พร้อมใช้งาน";
+    button.textContent = "Open Camera";
+    button.disabled = false;
+  }
 }
 
-loadOpenCvScript(
-  "./opencv.js",
-  "https://cdnjs.cloudflare.com/ajax/libs/opencv.js/4.9.0/opencv.js"
-);
-  
 function setTargetStatus(found) {
   detectedStatus.textContent = found ? "LOCKED" : "NO";
   detectedStatus.style.color =
@@ -953,7 +922,7 @@ function displayCoordinates(x, y) {
 // ========================================
 
 const WS_ENDPOINT =
-  "wss://https://developmental-girlfriend-greetings-having.trycloudflare.com";
+  "wss://developmental-girlfriend-greetings-having.trycloudflare.com";
 
 const PLAYER_NAME_SESSION_KEY = "lts_player_name";
 const PLAYER_PROMPTED_SESSION_KEY = "lts_player_prompted";
@@ -1161,8 +1130,8 @@ function openConstellationInfo(zone) {
   discoveryDescription.textContent = info.description || "ยังไม่มีคำอธิบายสำหรับกลุ่มดาวนี้";
 
   // ช่วงที่ 3: จุดเด่น และ จุดที่ควรระวัง
-  discoveryStrengths.textContent = info.strengths ? `  จุดเด่น: ${info.strengths}` : "";
-  discoveryWeaknesses.textContent = info.weaknesses ? `  จุดที่ควรระวัง: ${info.weaknesses}` : "";
+  discoveryStrengths.textContent = info.strengths ? `- จุดเด่น: ${info.strengths}` : "";
+  discoveryWeaknesses.textContent = info.weaknesses ? `- จุดที่ควรระวัง: ${info.weaknesses}` : "";
 
   discoveryOverlay.classList.add("is-open");
   discoveryOverlay.setAttribute("aria-hidden", "false");
@@ -2198,3 +2167,4 @@ document.addEventListener("pointerdown", (e) => {
 </script>
 </body>
 </html>
+```[cite: 3]

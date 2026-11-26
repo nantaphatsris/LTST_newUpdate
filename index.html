@@ -436,7 +436,7 @@ button:disabled {
   flex: 1 1 auto;
   min-height: 0;
   margin: 0;
-  padding: 10px 16px 30px;     /* 20px ตัวหลังสุด = ระยะห่างกล่องจากขอบจอล่าง */
+  padding: 10px 16px 30px;     /* 30px ตัวหลังสุด = ระยะห่างกล่องจากขอบจอล่าง */
   display: flex;
   flex-direction: column;
   justify-content: flex-end;     /* ดันทั้งหัวข้อและกล่องลงมาด้านล่าง */
@@ -474,16 +474,53 @@ button:disabled {
   line-height: 1.3;
 }
 
-/* --- ตัวกล่อง Liquid Glass --- */
-.discovery-info-inner {
+/* --- ตัวครอบกล่อง Liquid Glass (ให้ดาวลอยแปะอยู่นอกกล่องและอยู่เลเยอร์บนสุด) --- */
+.discovery-glass-wrap {
   position: relative;
-  isolation: isolate;
   width: 360px;                  /* ความกว้างกล่อง */
   height: 300px;                 /* ความสูงกล่อง */
   max-width: 90%;
   max-height: 90%;
-  min-height: 0;
   flex: 0 0 300px;               /* ใส่เลขเดียวกับ height ด้านบนเสมอ */
+}
+
+/* ดาวสีเหลืองเลเยอร์บนสุด (แปะทะลุขอบกล่องด้านนอก) */
+.discovery-glass-wrap::before,
+.discovery-glass-wrap::after {
+  position: absolute;
+  z-index: 10;                   /* อยู่เลเยอร์บนสุด ทับขอบกล่อง */
+  display: block;
+  height: auto;
+  color: #f4d58a;
+  text-shadow: 0 0 14px rgba(255, 211, 120, 0.75);
+  pointer-events: none;
+  line-height: 1;
+}
+
+/* ดาวดวงใหญ่ มุมซ้ายบน (ลอยเกยขอบกล่องออกมาด้านนอก) */
+.discovery-glass-wrap::before {
+  content: "✦";
+  top: -16px;
+  left: -10px;
+  font-size: 36px;               /* ขนาดใหญ่ขึ้น */
+}
+
+/* กลุ่มดาวมุมขวาล่าง (ลอยเกยขอบกล่องออกมาด้านนอก) */
+.discovery-glass-wrap::after {
+  content: "✧  ·  ✦";
+  right: -8px;
+  bottom: -12px;
+  font-size: 24px;               /* ขนาดใหญ่ขึ้น */
+  letter-spacing: 8px;
+}
+
+/* --- ตัวกล่อง Liquid Glass --- */
+.discovery-info-inner {
+  position: relative;
+  isolation: isolate;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
   padding: 18px 18px 30px;
   display: flex;
   flex-direction: column;
@@ -511,31 +548,6 @@ button:disabled {
 .discovery-info-inner::-webkit-scrollbar-thumb {
   background: rgba(220, 195, 255, .42);
   border-radius: 99px;
-}
-
-.discovery-info-inner::before,
-.discovery-info-inner::after {
-  position: absolute;
-  z-index: 2;
-  display: block;
-  height: auto;
-  color: #f4d58a;
-  text-shadow: 0 0 10px rgba(255, 211, 120, .55);
-  pointer-events: none;
-  line-height: 1;
-}
-.discovery-info-inner::before {
-  content: "✦";
-  top: 12px;
-  left: 16px;
-  font-size: 22px;
-}
-.discovery-info-inner::after {
-  content: "✧  ·  ✦";
-  right: 16px;
-  bottom: 10px;
-  font-size: 16px;
-  letter-spacing: 6px;
 }
 
 /* --- ช่วงที่ 2: วันที่/ธาตุ + รายละเอียดยาว --- */
@@ -567,7 +579,7 @@ button:disabled {
   color: #e4d4ff;                /* สีเดียวกับช่วงที่ 2 */
   font-size: 16px;
   font-weight: 400;
-  text-align: left;            /* ตัวอักษรอยู่กลาง */
+  text-align: left;
   line-height: 1.6;
 }
 #discoveryHighlights p {
@@ -582,13 +594,15 @@ button:disabled {
     top: 64px;
     height: calc(100dvh - 64px);
   }
-  .discovery-info { padding: 10px 14px 18px; }
-  .discovery-info-inner {
+  .discovery-info { padding: 10px 14px 24px; }
+  .discovery-glass-wrap {
     width: 360px;
     height: 300px;
     max-width: 90%;
     max-height: 90%;
     flex: 0 0 300px;
+  }
+  .discovery-info-inner {
     padding: 18px 16px 30px;
   }
   #discoveryMeta { font-size: 13.5px; }
@@ -691,13 +705,15 @@ button:not(:disabled).is-pressed {
         <p id="discoveryTitleTh">ราศีกุมภ์</p>
       </div>
 
-      <!-- กรอบ Liquid Glass (ช่วงที่ 2 + ช่วงที่ 3) -->
-      <div class="discovery-info-inner">
-        <p id="discoveryMeta">13 ก.พ. - 13 มี.ค. | ธาตุลม</p>
-        <p id="discoveryDescription"></p>
-        <div id="discoveryHighlights">
-          <p id="discoveryStrengths"></p>
-          <p id="discoveryWeaknesses"></p>
+      <!-- กรอบ Liquid Glass (ช่วงที่ 2 + ช่วงที่ 3) พร้อมดาวแปะอยู่นอกกรอบ -->
+      <div class="discovery-glass-wrap">
+        <div class="discovery-info-inner">
+          <p id="discoveryMeta">13 ก.พ. - 13 มี.ค. | ธาตุลม</p>
+          <p id="discoveryDescription"></p>
+          <div id="discoveryHighlights">
+            <p id="discoveryStrengths"></p>
+            <p id="discoveryWeaknesses"></p>
+          </div>
         </div>
       </div>
     </article>
@@ -906,7 +922,7 @@ function displayCoordinates(x, y) {
 // ========================================
 
 const WS_ENDPOINT =
-  "wss://https://drew-pocket-ball-internationally.trycloudflare.com";
+  "wss://russell-associates-metals-conditioning.trycloudflare.com";
 
 const PLAYER_NAME_SESSION_KEY = "lts_player_name";
 const PLAYER_PROMPTED_SESSION_KEY = "lts_player_prompted";
@@ -2151,3 +2167,4 @@ document.addEventListener("pointerdown", (e) => {
 </script>
 </body>
 </html>
+```[cite: 3]

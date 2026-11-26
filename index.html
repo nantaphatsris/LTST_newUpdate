@@ -939,22 +939,48 @@ const closeDiscoveryButton = document.getElementById("closeDiscovery");
 
 let isDiscoveryOpen = false;
 
+// โหลดวิดีโอทั้ง 12 ราศีเก็บไว้ในแคชล่วงหน้าทันทีที่เข้าเว็บ
+const preloadedVideos = {};
+function preloadAllConstellationVideos() {
+  if (typeof CONSTELLATION_INFO === "undefined") return;
+  Object.values(CONSTELLATION_INFO).forEach(info => {
+    if (!info.video || preloadedVideos[info.video]) return;
+    const v = document.createElement("video");
+    v.preload = "auto";
+    v.muted = true;
+    v.playsInline = true;
+    v.src = info.video;
+    v.load();
+    preloadedVideos[info.video] = v;
+  });
+}
+window.addEventListener("load", preloadAllConstellationVideos);
+
 function openConstellationInfo(zone) {
   if (!zone || !CONSTELLATION_INFO[zone.id]) return;
 
   const info = CONSTELLATION_INFO[zone.id];
   isDiscoveryOpen = true;
 
-  // ปิดวงแสงใน TouchDesigner ทันทีเมื่อเปิดอนิเมชัน เพื่อไม่ให้บังคนอื่น
+  // ปิดวงแสงใน TouchDesigner ทันทีเมื่อเปิดอนิเมชัน
   sendPlayerActive(false);
-
-  // เลื่อนหน้าจอกลับไปบนสุดเพื่อให้ Header อยู่ในตำแหน่งถูกต้องเสมอ
   window.scrollTo({ top: 0, behavior: "instant" });
 
-  discoveryVideo.pause();
-  discoveryVideo.loop = true;
-  discoveryVideo.currentTime = 0;
+  // เปิดหน้าต่างและใส่ข้อความขึ้นมาก่อนทันที ไม่ต้องรอวิดีโอโหลด
+  discoverySymbol.textContent = info.symbol || "CONSTELLATION";
+  discoveryTitle.textContent =
+    (info.thaiName || zone.name) + " — " + (info.name || zone.name);
+  discoveryDescription.textContent =
+    info.description || "ยังไม่มีคำอธิบายสำหรับกลุ่มดาวนี้";
+
+  discoveryOverlay.classList.add("is-open");
+  discoveryOverlay.setAttribute("aria-hidden", "false");
+  document.body.style.overflow = "hidden";
+
   closeDiscoveryButton.classList.remove("is-visible");
+  videoFallback.style.display = "none";
+  videoFallback.textContent =
+    "ยังไม่มีไฟล์ Animation ของกลุ่มดาวนี้\nนำไฟล์วิดีโอไปใส่ในโฟลเดอร์ animations แล้วตั้งชื่อให้ตรงกับราศีได้เลย";
 
   let firstLoopCompleted = false;
   let videoStarted = false;
@@ -965,16 +991,6 @@ function openConstellationInfo(zone) {
     firstLoopCompleted = true;
     closeDiscoveryButton.classList.add("is-visible");
   }
-
-  discoverySymbol.textContent = info.symbol || "CONSTELLATION";
-  discoveryTitle.textContent =
-    (info.thaiName || zone.name) + " — " + (info.name || zone.name);
-  discoveryDescription.textContent =
-    info.description || "ยังไม่มีคำอธิบายสำหรับกลุ่มดาวนี้";
-
-  videoFallback.style.display = "none";
-  videoFallback.textContent =
-    "ยังไม่มีไฟล์ Animation ของกลุ่มดาวนี้\nนำไฟล์วิดีโอไปใส่ในโฟลเดอร์ animations แล้วตั้งชื่อให้ตรงกับราศีได้เลย";
 
   discoveryVideo.onerror = () => {
     discoveryVideo.style.display = "none";
@@ -1010,14 +1026,14 @@ function openConstellationInfo(zone) {
     previousVideoTime = currentTime;
   };
 
-  discoveryVideo.src = info.video || "";
-  discoveryVideo.load();
-
-  discoveryOverlay.classList.add("is-open");
-  discoveryOverlay.setAttribute("aria-hidden", "false");
-  document.body.style.overflow = "hidden";
-
   if (info.video) {
+    const targetSrc = new URL(info.video, window.location.href).href;
+    if (discoveryVideo.src !== targetSrc) {
+      discoveryVideo.src = info.video;
+    }
+    discoveryVideo.currentTime = 0;
+    discoveryVideo.style.display = "block";
+
     discoveryVideo.play().catch(() => {
       videoFallback.style.display = "flex";
       videoFallback.textContent =
@@ -1066,7 +1082,6 @@ closeDiscoveryButton.addEventListener("click", closeConstellationInfo);
 
 // เริ่มเชื่อมต่อ
 connectWebSocket();
-
 // ========================================
 // GEOMETRY
 // ========================================

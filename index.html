@@ -436,7 +436,7 @@ button:disabled {
   flex: 1 1 auto;
   min-height: 0;
   margin: 0;
-  padding: 10px 16px 20px;     /* 20px ตัวหลังสุด = ระยะห่างกล่องจากขอบจอล่าง */
+  padding: 10px 16px 22px;     /* 20px ตัวหลังสุด = ระยะห่างกล่องจากขอบจอล่าง */
   display: flex;
   flex-direction: column;
   justify-content: flex-end;     /* ดันทั้งหัวข้อและกล่องลงมาด้านล่าง */
@@ -452,7 +452,7 @@ button:disabled {
 /* --- ช่วงที่ 1: หัวข้อชื่อราศี (อยู่นอกกรอบ เหนือกล่อง Liquid Glass) --- */
 .discovery-header-outside {
   text-align: center;
-  margin-bottom: 12px;           /* ระยะห่างระหว่างชื่อราศีไทยกับขอบบนกล่อง */
+  margin-bottom: 15px;           /* ระยะห่างระหว่างชื่อราศีไทยกับขอบบนกล่อง */
   padding: 0 12px;
   text-shadow: 0 2px 12px rgba(10, 3, 24, 0.85);
 }
@@ -467,7 +467,7 @@ button:disabled {
 }
 
 #discoveryTitleTh {
-  margin: 2px 0 0;
+  margin: 5px 0 0;
   color: #cfb3ff;                /* สีม่วงอ่อน */
   font-size: clamp(16px, 4vw, 19px); /* ตัวเล็กกว่าภาษาอังกฤษ */
   font-weight: 500;
@@ -479,12 +479,12 @@ button:disabled {
   position: relative;
   isolation: isolate;
   width: 330px;                  /* ความกว้างกล่อง */
-  height: 215px;                 /* ความสูงกล่อง */
-  max-width: 92%;
-  max-height: 75%;
+  height: 280px;                 /* ความสูงกล่อง */
+  max-width: 90%;
+  max-height: 82%;
   min-height: 0;
-  flex: 0 0 215px;               /* ใส่เลขเดียวกับ height ด้านบนเสมอ */
-  padding: 18px 18px 16px;
+  flex: 0 0 280px;               /* ใส่เลขเดียวกับ height ด้านบนเสมอ */
+  padding: 18px 18px 22px;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
@@ -567,7 +567,7 @@ button:disabled {
   color: #e4d4ff;                /* สีเดียวกับช่วงที่ 2 */
   font-size: 13px;
   font-weight: 400;
-  text-align: center;            /* ตัวอักษรอยู่กลาง */
+  text-align: left;            /* ตัวอักษรอยู่กลาง */
   line-height: 1.6;
 }
 #discoveryHighlights p {
@@ -585,11 +585,11 @@ button:disabled {
   .discovery-info { padding: 10px 14px 18px; }
   .discovery-info-inner {
     width: 320px;
-    height: 220px;
-    max-width: 92%;
-    max-height: 75%;
-    flex: 0 0 220px;
-    padding: 18px 16px 16px;
+    height: 280px;
+    max-width: 90%;
+    max-height: 82%;
+    flex: 0 0 280px;
+    padding: 18px 16px 22px;
   }
   #discoveryMeta { font-size: 13.5px; }
   #discoveryDescription,

@@ -5,6 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Light The Star</title>
 
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
 <style>
 * { box-sizing: border-box; }
 :root {
@@ -27,7 +31,7 @@ body {
   display: flex;
   flex-direction: column;
   color: var(--text);
-  font-family: Arial, sans-serif;
+  font-family: 'Kanit', Arial, sans-serif;
   background:
     radial-gradient(1px 1px at 12% 18%, rgba(255,255,255,.45) 99%, transparent),
     radial-gradient(1px 1px at 76% 23%, rgba(217,186,255,.40) 99%, transparent),
@@ -167,12 +171,11 @@ button {
   color: #f3ecff;
   font-family: inherit;
   font-size: 15px;
-  font-weight: 700;
+  font-weight: 600;
   line-height: 1.5;
   cursor: pointer;
   box-shadow: inset 0 1px 0 rgba(235, 215, 255, 0.14), 0 6px 16px rgba(8, 2, 20, 0.35);
 }
-button:active { transform: scale(.975); }
 button:disabled {
   background: #21123d;
   border-color: rgba(160, 126, 190, .2);
@@ -222,14 +225,11 @@ button:disabled {
   -webkit-backdrop-filter: blur(15px) saturate(125%);
   cursor: pointer;
 }
-#playerBar:active {
-  transform: scale(0.97);
-}
 #playerInfo {
   display: block;
   color: rgba(246, 238, 255, .94) !important;
   font-size: 11px !important;
-  font-weight: 600;
+  font-weight: 500;
   text-align: center;
   line-height: 1.1;
   white-space: nowrap;
@@ -265,7 +265,7 @@ button:disabled {
   margin: 0 26px 19px;
   color: #fff;
   font-size: 19px;
-  font-weight: 650;
+  font-weight: 600;
   letter-spacing: .08em;
 }
 #playerNameInput {
@@ -291,7 +291,7 @@ button:disabled {
   border: 1px solid rgba(190, 151, 222, 0.38);
   border-radius: 14px;
   font-size: 13px;
-  font-weight: 650;
+  font-weight: 600;
   letter-spacing: .02em;
   background: linear-gradient(125deg, rgba(54, 26, 107, 0.96), rgba(25, 10, 53, 0.98));
   box-shadow: inset 0 1px 0 rgba(245, 225, 255, 0.16), 0 6px 16px rgba(0, 0, 0, 0.32);
@@ -348,7 +348,7 @@ button:disabled {
 }
 
 /* ========================================
-   CONSTELLATION DISCOVERY OVERLAY
+   CONSTELLATION DISCOVERY OVERLAY (3 ช่วง + ฟอนต์ Kanit)
    ======================================== */
 #discoveryOverlay {
   position: fixed;
@@ -431,42 +431,64 @@ button:disabled {
 }
 #closeDiscovery.is-visible { display: flex; align-items: center; justify-content: center; }
 
-
-
-
-
-  
-/* 1. ตัวจัดตำแหน่งกล่อง (ดันกล่องให้เลื่อนลงมาด้านล่าง) */
+/* ตัวจัดตำแหน่งด้านล่าง */
 .discovery-info {
   flex: 1 1 auto;
   min-height: 0;
   margin: 0;
-  padding: 12px 16px 20px;     /* 20px ตัวหลังสุด = ระยะห่างจากขอบจอล่าง (ยิ่งน้อยยิ่งชิดขอบล่าง) */
+  padding: 10px 16px 20px;     /* 20px ตัวหลังสุด = ระยะห่างกล่องจากขอบจอล่าง */
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;     /* ดันกล่องลงมาด้านล่างของจอ */
+  justify-content: flex-end;     /* ดันทั้งหัวข้อและกล่องลงมาด้านล่าง */
   align-items: center;
   overflow: hidden;
   border: 0;
   border-radius: 0;
   background: transparent;
   color: #fff;
-}/* 2. ตัวกล่อง Liquid Glass (ใช้ค่านี้ทั้งบนมือถือและ iPad) */
+  font-family: 'Kanit', sans-serif;
+}
+
+/* --- ช่วงที่ 1: หัวข้อชื่อราศี (อยู่นอกกรอบ เหนือกล่อง Liquid Glass) --- */
+.discovery-header-outside {
+  text-align: center;
+  margin-bottom: 12px;           /* ระยะห่างระหว่างชื่อราศีไทยกับขอบบนกล่อง */
+  padding: 0 12px;
+  text-shadow: 0 2px 12px rgba(10, 3, 24, 0.85);
+}
+
+#discoveryTitleEn {
+  margin: 0;
+  color: #ffffff;                /* สีขาว */
+  font-size: clamp(26px, 6vw, 34px); /* ตัวใหญ่ */
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: 0.03em;
+}
+
+#discoveryTitleTh {
+  margin: 2px 0 0;
+  color: #cfb3ff;                /* สีม่วงอ่อน */
+  font-size: clamp(16px, 4vw, 19px); /* ตัวเล็กกว่าภาษาอังกฤษ */
+  font-weight: 500;
+  line-height: 1.3;
+}
+
+/* --- ตัวกล่อง Liquid Glass --- */
 .discovery-info-inner {
   position: relative;
   isolation: isolate;
-  width: 330px;                /* <-- ปรับความกว้างกล่องตรงนี้ (เหมาะกับทั้งมือถือและ iPad) */
-  height: 200px;               /* <-- ปรับความสูงกล่องตรงนี้ (ลดให้เตี้ยลงตามต้องการ) */
-  max-width: 90%;              /* กันล้นจอมือถือรุ่นเล็ก */
-  max-height: 82%;             /* กันล้นพื้นที่ด้านล่าง */
+  width: 330px;                  /* ความกว้างกล่อง */
+  height: 215px;                 /* ความสูงกล่อง */
+  max-width: 92%;
+  max-height: 75%;
   min-height: 0;
-  flex: 0 0 200px;             /* <-- ใส่เลขเดียวกับ height ด้านบนเสมอ */
-  padding: 20px 18px 18px;
+  flex: 0 0 215px;               /* ใส่เลขเดียวกับ height ด้านบนเสมอ */
+  padding: 18px 18px 16px;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
-  text-align: center;
   overflow-y: auto;
   overscroll-behavior: contain;
   -webkit-overflow-scrolling: touch;
@@ -504,54 +526,76 @@ button:disabled {
 }
 .discovery-info-inner::before {
   content: "✦";
-  top: 14px;
-  left: 18px;
-  font-size: 27px;
+  top: 12px;
+  left: 16px;
+  font-size: 22px;
 }
 .discovery-info-inner::after {
   content: "✧  ·  ✦";
-  right: 18px;
-  bottom: 12px;
-  font-size: 19px;
-  letter-spacing: 8px;
+  right: 16px;
+  bottom: 10px;
+  font-size: 16px;
+  letter-spacing: 6px;
 }
-#discoverySymbol {
-  margin: 0 0 8px;
-  color: #d9c8f4;
-  font-size: 13px;
-  font-weight: 700;
-  letter-spacing: .08em;
+
+/* --- ช่วงที่ 2: วันที่/ธาตุ + รายละเอียดยาว --- */
+#discoveryMeta {
+  width: 100%;
+  margin: 0 0 16px;              /* เว้น 1 บรรทัดก่อนขึ้นรายละเอียดยาว */
+  color: #e4d4ff;                /* สีม่วงที่อ่อนกว่าชื่อราศีไทย */
+  font-size: 14px;               /* ตัวเล็กกว่าราศีกุมภ์หน่อย */
+  font-weight: 500;
+  text-align: center;            /* ตัวอักษรอยู่กลาง */
+  line-height: 1.4;
 }
-#discoveryTitle {
-  margin: 0 0 14px;
-  color: #fff;
-  font-size: clamp(22px, 5vw, 30px);
-  line-height: 1.35;
-}
+
 #discoveryDescription {
-  margin: 0;
-  color: #eee8f7;
-  font-size: 14px;
-  line-height: 1.8;
+  width: 100%;
+  margin: 0 0 16px;              /* เว้น 1 บรรทัดก่อนขึ้นช่วงที่ 3 */
+  color: #e4d4ff;                /* สีเดียวกับบรรทัดแรก */
+  font-size: 13px;               /* ตัวเล็กกว่าบรรทัดแรก */
+  font-weight: 300;
+  text-align: left;              /* ตัวอักษรชิดซ้าย */
+  line-height: 1.65;
   white-space: pre-line;
 }
+
+/* --- ช่วงที่ 3: จุดเด่น และ จุดที่ควรระวัง --- */
+#discoveryHighlights {
+  width: 100%;
+  margin: 0;
+  color: #e4d4ff;                /* สีเดียวกับช่วงที่ 2 */
+  font-size: 13px;
+  font-weight: 400;
+  text-align: center;            /* ตัวอักษรอยู่กลาง */
+  line-height: 1.6;
+}
+#discoveryHighlights p {
+  margin: 0 0 4px;
+}
+#discoveryHighlights p:last-child {
+  margin-bottom: 0;
+}
+
 @media (max-width: 480px) {
   #discoveryOverlay {
     top: 64px;
     height: calc(100dvh - 64px);
   }
-  .discovery-info { padding: 12px 14px 18px; }
+  .discovery-info { padding: 10px 14px 18px; }
   .discovery-info-inner {
-    width: 320px;              /* <-- ปรับความกว้างบนมือถือตรงนี้ */
-    height: 280px;             /* <-- ปรับความสูงบนมือถือตรงนี้ */
+    width: 320px;
+    height: 220px;
     max-width: 92%;
-    max-height: 85%;
-    flex: 0 0 280px;           /* <-- ใส่ตัวเลขเดียวกับ height ด้านบน */
-    padding: 22px 16px 20px;
-    border-radius: 26px;
+    max-height: 75%;
+    flex: 0 0 220px;
+    padding: 18px 16px 16px;
   }
-  #discoveryDescription { font-size: 13px; }
+  #discoveryMeta { font-size: 13.5px; }
+  #discoveryDescription,
+  #discoveryHighlights { font-size: 12.5px; }
 }
+
 /* ========================================
    TACTILE BUTTON PRESS FEEDBACK (รองรับมือถือ + คอมชัดเจน)
    ======================================== */
@@ -574,7 +618,6 @@ button:not(:disabled):hover,
   filter: brightness(1.15);
 }
 
-/* จังหวะกดปุ่ม (ทั้งคลิกเมาส์ และนิ้วแตะบนมือถือผ่านคลาส .is-pressed) */
 button:not(:disabled):active,
 button:not(:disabled).is-pressed {
   transform: translateY(3px) scale(0.91) !important;
@@ -585,7 +628,6 @@ button:not(:disabled).is-pressed {
     0 0 16px rgba(155, 92, 255, 0.55) !important;
 }
 
-/* ปุ่ม Discover ตรงกลางล่าง (รักษาตำแหน่งกึ่งกลางไว้ไม่ให้เบี้ยว) */
 #runAnimation:not(:disabled):hover {
   transform: translateX(-50%) translateY(-1px);
 }
@@ -599,7 +641,6 @@ button:not(:disabled).is-pressed {
     0 0 22px rgba(176, 118, 255, 0.7) !important;
 }
 
-/* แถบชื่อผู้เล่นและปุ่มกากบาทปิดหน้าต่าง */
 #playerBar:active,
 #playerBar.is-pressed,
 #closeNameDialog:active,
@@ -609,7 +650,6 @@ button:not(:disabled).is-pressed {
   transform: scale(0.88) !important;
   filter: brightness(1.32) !important;
 }
-  
 </style>
 
 <script async
@@ -643,11 +683,22 @@ button:not(:disabled).is-pressed {
       <button id="closeDiscovery" type="button" aria-label="ปิดหน้าต่าง">×</button>
       <div id="videoFallback">ยังไม่มีไฟล์ Animation ของกลุ่มดาวนี้<br>นำไฟล์วิดีโอไปใส่ในโฟลเดอร์ animations แล้วตั้งชื่อให้ตรงกับราศีได้เลย</div>
     </div>
+
     <article class="discovery-info">
+      <!-- ช่วงที่ 1: หัวข้ออยู่นอกกรอบด้านบน -->
+      <div class="discovery-header-outside">
+        <h2 id="discoveryTitleEn">Aquarius</h2>
+        <p id="discoveryTitleTh">ราศีกุมภ์</p>
+      </div>
+
+      <!-- กรอบ Liquid Glass (ช่วงที่ 2 + ช่วงที่ 3) -->
       <div class="discovery-info-inner">
-        <p id="discoverySymbol">CONSTELLATION</p>
-        <h2 id="discoveryTitle">Constellation</h2>
+        <p id="discoveryMeta">13 ก.พ. - 13 มี.ค. | ธาตุลม</p>
         <p id="discoveryDescription"></p>
+        <div id="discoveryHighlights">
+          <p id="discoveryStrengths"></p>
+          <p id="discoveryWeaknesses"></p>
+        </div>
       </div>
     </article>
   </div>
@@ -1013,15 +1064,18 @@ function sendXYToTouchDesigner(x, y) {
 }
 
 // ========================================
-// WEBSITE CONSTELLATION ANIMATION
+// WEBSITE CONSTELLATION ANIMATION (3 ช่วง)
 // ========================================
 
 const discoveryOverlay = document.getElementById("discoveryOverlay");
 const discoveryVideo = document.getElementById("discoveryVideo");
 const videoFallback = document.getElementById("videoFallback");
-const discoverySymbol = document.getElementById("discoverySymbol");
-const discoveryTitle = document.getElementById("discoveryTitle");
+const discoveryTitleEn = document.getElementById("discoveryTitleEn");
+const discoveryTitleTh = document.getElementById("discoveryTitleTh");
+const discoveryMeta = document.getElementById("discoveryMeta");
 const discoveryDescription = document.getElementById("discoveryDescription");
+const discoveryStrengths = document.getElementById("discoveryStrengths");
+const discoveryWeaknesses = document.getElementById("discoveryWeaknesses");
 const closeDiscoveryButton = document.getElementById("closeDiscovery");
 
 let isDiscoveryOpen = false;
@@ -1051,11 +1105,17 @@ function openConstellationInfo(zone) {
   sendPlayerActive(false);
   window.scrollTo({ top: 0, behavior: "instant" });
 
-  discoverySymbol.textContent = info.symbol || "CONSTELLATION";
-  discoveryTitle.textContent =
-    (info.thaiName || zone.name) + " — " + (info.name || zone.name);
-  discoveryDescription.textContent =
-    info.description || "ยังไม่มีคำอธิบายสำหรับกลุ่มดาวนี้";
+  // ช่วงที่ 1: ชื่ออังกฤษ + ชื่อไทย นอกกรอบ
+  discoveryTitleEn.textContent = info.name || zone.name;
+  discoveryTitleTh.textContent = info.thaiName || "";
+
+  // ช่วงที่ 2: วันที่/ธาตุ + รายละเอียดยาว
+  discoveryMeta.textContent = info.meta || "";
+  discoveryDescription.textContent = info.description || "ยังไม่มีคำอธิบายสำหรับกลุ่มดาวนี้";
+
+  // ช่วงที่ 3: จุดเด่น และ จุดที่ควรระวัง
+  discoveryStrengths.textContent = info.strengths ? `- จุดเด่น: ${info.strengths}` : "";
+  discoveryWeaknesses.textContent = info.weaknesses ? `- จุดที่ควรระวัง: ${info.weaknesses}` : "";
 
   discoveryOverlay.classList.add("is-open");
   discoveryOverlay.setAttribute("aria-hidden", "false");
@@ -2069,6 +2129,7 @@ window.addEventListener("load", () => {
     onOpenCvReady();
   }
 });
+
 // ========================================
 // MOBILE TOUCH PRESS EFFECT
 // ========================================
@@ -2087,7 +2148,6 @@ document.addEventListener("pointerdown", (e) => {
     }
   }, { passive: true });
 });
-  
 </script>
 </body>
 </html>

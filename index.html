@@ -452,7 +452,7 @@ button:disabled {
 /* --- ช่วงที่ 1: หัวข้อชื่อราศี (อยู่นอกกรอบ เหนือกล่อง Liquid Glass) --- */
 .discovery-header-outside {
   text-align: center;
-  margin-bottom: 14px;           /* ระยะห่างระหว่างชื่อราศีไทยกับขอบบนกล่อง */
+  margin-bottom: 13px;           /* ระยะห่างระหว่างชื่อราศีไทยกับขอบบนกล่อง */
   padding: 0 14px;
   text-shadow: 0 2px 12px rgba(10, 3, 24, 0.85);
 }
@@ -553,9 +553,9 @@ button:disabled {
 /* --- ช่วงที่ 2: วันที่/ธาตุ + รายละเอียดยาว --- */
 #discoveryMeta {
   width: 100%;
-  margin: 0 0 15px;              /* เว้น 1 บรรทัดก่อนขึ้นรายละเอียดยาว */
+  margin: 0 0 14px;              /* เว้น 1 บรรทัดก่อนขึ้นรายละเอียดยาว */
   color: #e4d4ff;                /* สีม่วงที่อ่อนกว่าชื่อราศีไทย */
-  font-size: 17px;               /* ตัวเล็กกว่าราศีกุมภ์หน่อย */
+  font-size: 20px;               /* ตัวเล็กกว่าราศีกุมภ์หน่อย */
   font-weight: 500;
   text-align: center;            /* ตัวอักษรอยู่กลาง */
   line-height: 1.4;
@@ -563,9 +563,9 @@ button:disabled {
 
 #discoveryDescription {
   width: 100%;
-  margin: 0 0 15px;              /* เว้น 1 บรรทัดก่อนขึ้นช่วงที่ 3 */
+  margin: 0 0 14px;              /* เว้น 1 บรรทัดก่อนขึ้นช่วงที่ 3 */
   color: #e4d4ff;                /* สีเดียวกับบรรทัดแรก */
-  font-size: 16px;               /* ตัวเล็กกว่าบรรทัดแรก */
+  font-size: 18px;               /* ตัวเล็กกว่าบรรทัดแรก */
   font-weight: 300;
   text-align: left;              /* ตัวอักษรชิดซ้าย */
   line-height: 1.65;
@@ -577,7 +577,7 @@ button:disabled {
   width: 100%;
   margin: 0;
   color: #e4d4ff;                /* สีเดียวกับช่วงที่ 2 */
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 400;
   text-align: left;
   line-height: 1.6;
@@ -1130,8 +1130,8 @@ function openConstellationInfo(zone) {
   discoveryDescription.textContent = info.description || "ยังไม่มีคำอธิบายสำหรับกลุ่มดาวนี้";
 
   // ช่วงที่ 3: จุดเด่น และ จุดที่ควรระวัง
-  discoveryStrengths.textContent = info.strengths ? `- จุดเด่น: ${info.strengths}` : "";
-  discoveryWeaknesses.textContent = info.weaknesses ? `- จุดที่ควรระวัง: ${info.weaknesses}` : "";
+  discoveryStrengths.textContent = info.strengths ? `  จุดเด่น: ${info.strengths}` : "";
+  discoveryWeaknesses.textContent = info.weaknesses ? `  จุดที่ควรระวัง: ${info.weaknesses}` : "";
 
   discoveryOverlay.classList.add("is-open");
   discoveryOverlay.setAttribute("aria-hidden", "false");
